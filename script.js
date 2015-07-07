@@ -1,38 +1,73 @@
-	$(function() {
+$(function() {
 
-	  // form to search spotify
-	  var $spotifySearch = $("#spotify-search");
+  // form to search spotify API
+  var $spotifySearch = $('#spotify-search');
 
-	 // form input for tracks
-	 var $track = $("#track");
+  // form input for track (song)
+  var $track = $('#track');
 
-	  //where to show results 
-	  var $results = $("#results")
+  // element to hold results from spotify API
+  var $results = $('#results');
 
-		//submit form to look for songs
-	  $spotifySearch.on("submit", function(event){
-	  	event.preventDefault();
-	  	console.log("suck it")
+  // loading gif
+  var $loading = $('#loading');
 
-	  	var getMusic = 'https://api.spotify.com/v1/search?type=track&q='+ $track.val();
+  // track (song) template
+  var trackTemplate = _.template($('#track-template').html());
 
-	  	console.log(getMusic)
+  // submit form to search spotify API
+  $spotifySearch.on('submit', function(event) {
+    event.preventDefault();
 
-	  	$.get(getMusic,function(data){
-	  			console.log(data)
+    // empty previous results and show loading gif
+    $results.empty();
+    $loading.show();
 
-	  			_.each(data.tracks.items, function(items, i){
-	  				console.log(items.name)
-	  				$results.append("<li>"+ items.name +"</li>");
+    // save form data to variable
+    var searchTrack = $track.val();
 
+    // spotify search URL
+    var searchUrl = 'https://api.spotify.com/v1/search?type=track&q=' + searchTrack;
 
+    // use AJAX to call spotify API
+    $.get(searchUrl, function(data) {
 
-	});
+      // track results are in an array called `items`
+      // which is nested in the `tracks` object
+      var trackResults = data.tracks.items;
+      console.log(trackResults);
 
-	  	});
+      // hide loading gif
+      $loading.hide();
 
-	  });
+      // only append results if there are any
+      if (trackResults.length > 0) {
 
+        // iterate through results
+        _.each(trackResults, function(result, index) {
+          
+          // build object of data we want in our template
+          var templateData = {
+            albumArt: result.album.images.length > 0 ? result.album.images[0].url : null,
+            artist: result.artists[0].name,
+            name: result.name,
+            previewUrl: result.preview_url
+          };
 
+          // put data in template and append to view
+          var $trackResult = $(trackTemplate(templateData));
+          $results.append($trackResult);
+        });
 
-	});
+      // else let user know there are no results
+      } else {
+        $results.append('No results.');
+      }
+    });
+
+    // reset the form
+    $spotifySearch[0].reset();
+    $track.focus();
+  });
+
+});

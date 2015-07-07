@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 
   <!-- custom styles -->
-  <link rel="stylesheet" type="text/css" href="styles.css">
+  <link rel="stylesheet" type="text/css" href="style.css">
 
   <title>Spotify App</title>
 </head>
@@ -28,12 +28,12 @@
             </div>
           </form>
           <hr>
+          <img src="loading.gif" width="80" id="loading">
         </div>
         <div id="results"></div>
       </div>
     </div>
   </div>
-
 
   <!-- jquery -->
   <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
@@ -48,11 +48,21 @@
   <script type="text/javascript" src="script.js"></script>
 
   <!-- underscore template -->
-   <script type="text/template" id="spotify-template">
-    <div class="spotify">
-      <p>
-        <%= Artist %> 
-      </p>
+  <script type="text/template" id="track-template">
+    <div class="track">
+      <div class="row">
+        <div class="col-xs-4">
+          <img src="<%= albumArt %>" class="img-responsive">
+        </div>
+        <div class="col-xs-8">
+          <p>
+            <strong><%= name %></strong> by <%= artist %>
+          </p>
+          <p>
+            <a href="<%= previewUrl %>" target="_blank" class="btn btn-sm btn-default">Preview <span class="glyphicon glyphicon-play"></span></a>
+          </p>
+        </div>
+      </div>
       <hr>
     </div>
   </script>
